@@ -2,6 +2,7 @@
 (local struct (require :struct))
 
 (local osc (require :osc))
+(local gui (require :gui))
 
 (local rnd love.math.random)
 
@@ -9,16 +10,22 @@
 (local port 7001)
 
 (fn love.load []
+  (gui.init)
+
   (global udp (socket.udp))
   (: udp :settimeout 0)
   (: udp :setpeername ip port))
-  ; (let
-  ;   [(ok err) (: udp :send (msg))]
-  ;   (print (.. "status" (tostring ok)))))
 
 (fn love.draw []
-  (love.graphics.print "Hello Wordl", 400, 300))
+  (gui.draw))
 
 (fn love.update [dt]
+  (gui.update dt)
   (: udp :send (osc.float-msg (rnd 1 127))))
+
+(fn love.mousepressed [x y button]
+  (gui.mouse-pressed))
+
+(fn love.mousereleased[x y button]
+  (gui.mouse-released))
 
