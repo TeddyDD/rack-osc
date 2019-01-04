@@ -3,4 +3,6 @@
 ##### Do not edit.
 .tup
 /.gitignore
+/gui.lua
 /main.lua
+/osc.lua
