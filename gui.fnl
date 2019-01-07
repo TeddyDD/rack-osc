@@ -41,18 +41,23 @@
                         y w 40)))
     (ComponentWrapper.new controls)))
 
-(fn make-slider []
-  (doto (gooi.newSlider
-           {:value 0.5
-            :h 400 :w 50})
-    (: :vertical)))
-
-; side - "top" "bottom"
 (fn make-sliders [side]
-  (make-slider)
-  (make-slider)
-  (make-slider)
-  (make-slider))
+  (var sliders [])
+  (let [(width heigth) (window.getMode)
+        margin 10
+        origin (if (= side "left") 0 (+ (/ width 2) margin))
+        y 50
+        w (- (/ width 2 5) (/ margin 2 5))
+        h (- heigth y margin)]
+    (for [i 1 4]
+      (tset sliders i 
+            (doto (gooi.newSlider
+                     {:value 0.5
+                      :x (+ origin (* (- i 1) (+ w margin)))
+                      :y y :h h :w w})
+              (: :vertical)))))
+  (ComponentWrapper.new sliders))
+
 
 (fn init []
   (let [w 800 h 600]
@@ -60,7 +65,9 @@
        {:resizable true
         :minwidth w
         :minheight h})
-    (tset state :menu (make-menu))))
+    (tset state :menu (make-menu))
+    (tset state :l-sliders (make-sliders "left"))
+    (tset state :r-sliders (make-sliders "right"))))
     ; (make-sliders "top")))
 
 {:draw gooi.draw
