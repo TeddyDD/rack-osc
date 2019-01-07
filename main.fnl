@@ -9,7 +9,10 @@
 (local ip "127.0.0.1")
 (local port 7001)
 
+(global scrale (require "scrale"))
+
 (fn love.load []
+  (scrale.init)
   (gui.init)
 
   (global udp (socket.udp))
@@ -17,7 +20,9 @@
   (: udp :setpeername ip port))
 
 (fn love.draw []
-  (gui.draw))
+  (scrale.drawOnCanvas true)
+  (gui.draw)
+  (scrale.draw))
 
 (fn love.update [dt]
   (gui.update dt)

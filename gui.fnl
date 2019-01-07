@@ -1,5 +1,5 @@
 (require "gooi")
-(local dbg (require "dbg"))
+; (local dbg (require "dbg"))
 (local window love.window)
 
 (let [style {:font (love.graphics.newFont "/font/Inter-UI-Regular.ttf" 12)}]
@@ -26,6 +26,11 @@
       (: :setVisible visible)
       (: :setEnabled visible))))
 
+(fn size-from-pixels []
+  (let [(width heigth) (window.getMode)]
+    (values (window.toPixels width)
+            (window.toPixels heigth))))
+
 (fn make-menu []
   (let [x 10
         w 100
@@ -43,7 +48,7 @@
 
 (fn make-sliders [side]
   (var sliders [])
-  (let [(width heigth) (window.getMode)
+  (let [(width heigth) (size-from-pixels)
         margin 10
         origin (if (= side "left") 0 (+ (/ width 2) margin))
         y 50
@@ -54,7 +59,9 @@
             (doto (gooi.newSlider
                      {:value 0.5
                       :x (+ origin (* (- i 1) (+ w margin)))
-                      :y y :h h :w w})
+                      :y y 
+                      :h h 
+                      :w w})
               (: :vertical)))))
   (ComponentWrapper.new sliders))
 
