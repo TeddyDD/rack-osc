@@ -26,6 +26,6 @@
 (fn love.mousepressed [x y button]
   (gui.mouse-pressed))
 
-(fn love.mousereleased[x y button]
+(fn love.mousereleased [x y button]
   (gui.mouse-released))
 
