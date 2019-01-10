@@ -1,6 +1,8 @@
 (local socket (require :socket))
 (local struct (require :struct))
 
+(local suit (require :suit))
+
 (local osc (require :osc))
 (local gui (require :gui))
 
@@ -20,12 +22,5 @@
   (gui.draw))
 
 (fn love.update [dt]
-  (gui.update dt)
+  (gui.update)
   (: udp :send (osc.float-msg (rnd 1 127))))
-
-(fn love.mousepressed [x y button]
-  (gui.mouse-pressed))
-
-(fn love.mousereleased [x y button]
-  (gui.mouse-released))
-
