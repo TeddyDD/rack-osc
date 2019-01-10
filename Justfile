@@ -2,7 +2,7 @@ run:
     love .
     
 deploy: build
-    zip ~/Sync/rack.love *
+    zip -r ~/Sync/rack.love *
 
 build:
     tup
