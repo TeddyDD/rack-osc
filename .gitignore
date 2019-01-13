@@ -4,5 +4,7 @@
 .tup
 /.gitignore
 /gui.lua
+/layout.lua
 /main.lua
 /osc.lua
+/build/rack.love
