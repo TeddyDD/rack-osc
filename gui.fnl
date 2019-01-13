@@ -1,5 +1,4 @@
 (require "gooi")
-(local dbg (require "dbg"))
 (local window love.window)
 
 (let [style {:font (love.graphics.newFont "/font/Inter-UI-Regular.ttf" 12)}]
