@@ -3,6 +3,7 @@
 
 (local osc (require :osc))
 (local gui (require :gui))
+(local layout (require :layout))
 
 (local rnd love.math.random)
 
@@ -17,10 +18,13 @@
   (: udp :setpeername ip port))
 
 (fn love.draw []
-  (gui.draw))
+  (gui.draw)
+  (layout.draw)
+  (love.graphics.print (tostring (love.window.getDPIScale) 10 10)))
 
 (fn love.update [dt]
   (gui.update dt)
+  (layout.update)
   (: udp :send (osc.float-msg (rnd 1 127))))
 
 (fn love.mousepressed [x y button]

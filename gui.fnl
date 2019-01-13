@@ -44,10 +44,10 @@
   (var sliders [])
   (let [(width heigth) (window.getMode)
         margin 10
-        origin (if (= side "left") 0 (+ (/ width 2) margin))
+        origin (if (= side "left") 0 (/ (+ (/ width 2) margin)) (window.getDPIScale))
         y 50
-        w (- (/ width 2 5) (/ margin 2 5))
-        h (- heigth y margin)]
+        w (window.fromPixels (- (/ width 2 5) (/ margin 2 5)))
+        h (window.fromPixels (- heigth y margin))]
     (for [i 1 4]
       (tset sliders i 
             (doto (gooi.newSlider
@@ -65,8 +65,8 @@
         :minwidth w
         :minheight h})
     (tset state :menu (make-menu))
-    (tset state :l-sliders (make-sliders "left"))
-    (tset state :r-sliders (make-sliders "right"))))
+    (tset state :l-sliders (make-sliders "left"))))
+    ; (tset state :r-sliders (make-sliders "right"))))
     ; (make-sliders "top")))
 
 {:draw gooi.draw
