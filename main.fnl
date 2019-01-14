@@ -33,3 +33,11 @@
 (fn love.mousereleased [x y button]
   (gui.mouse-released))
 
+(fn love.touchpressed [id x y]
+  (gui.mouse-pressed id x y))
+
+(fn love.touchreleased [id x y]
+  (gui.mouse-released id x y))
+
+(fn love.touchmoved [id x y]
+  (gui.mouse-moved id x y))

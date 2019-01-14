@@ -73,5 +73,6 @@
  :update gooi.update
  :mouse-pressed gooi.pressed
  :mouse-released gooi.released
+ :mouse-moved gooi.moved
  :init init}
 
