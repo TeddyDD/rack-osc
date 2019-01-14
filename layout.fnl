@@ -22,6 +22,21 @@
     (g.rectangle "line" x y w heigth)
     (values x y w heigth)))
 
+(fn rest [options x y w h]
+  (let [vertical (or (. options :vertical) false)
+        split (. options :split)
+        first (if vertical
+                  {:w w :h split}
+                  {:h h :w split})
+        second (if vertical
+                   {:x x :y (+ y split) :w w :h (- h split)}
+                   {:y y :x (+ x split) :h h :w (- w split)})]
+    (g.setColor 0 0 1)
+    (g.rectangle "line" x y first.w first.h)
+    (g.setColor 1 0 0)
+    (g.rectangle "line" second.x second.y second.w second.h)))
+
+
 (fn stack [x y w h options]
   (let [splits options.splits
         vertical (or (. options :vertical) false)
@@ -38,6 +53,7 @@
 (fn draw []
   (g.setLineWidth 3)
   (main-screen)
+  (rest {:split 40 :vertical false} (full-screen-rect))
   (menu 40)
   (let [(_ _ fw fh) (full-screen-rect)]
     (stack 0 40 fw (- fh 40)  {:splits 2 :vertical true})))
