@@ -12,6 +12,7 @@
 
 (fn love.load []
   (gui.init)
+  (layout.update)
 
   (global udp (socket.udp))
   (: udp :settimeout 0)
