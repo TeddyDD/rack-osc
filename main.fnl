@@ -3,7 +3,9 @@
 
 (local osc (require :osc))
 (local gui (require :gui))
+
 (local layout (require :layout))
+(layout.recalculate-layout)
 
 (local rnd love.math.random)
 
@@ -11,8 +13,9 @@
 (local port 7001)
 
 (fn love.load []
-  (gui.init)
+  
   (layout.update)
+  (gui.init)
 
   (global udp (socket.udp))
   (: udp :settimeout 0)

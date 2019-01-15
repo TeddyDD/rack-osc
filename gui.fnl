@@ -1,4 +1,6 @@
 (require "gooi")
+(local layout (require :layout))
+
 (local window love.window)
 
 (let [style {:font (love.graphics.newFont "/font/Inter-UI-Regular.ttf" 12)}]
@@ -26,35 +28,33 @@
       (: :setEnabled visible))))
 
 (fn make-menu []
-  (let [x 10
-        w 100
-        y 5
+  (let [sizes (layout.get "menuButtons")
         controls 
           [(doto (gooi.newButton {:text "Exit"})
              (: :onRelease (fn exit-handler [] (love.event.quit))))
            (gooi.newButton {:text "Layout"})
            (gooi.newButton {:text "Conn"})]]
+    ; (local dbg (require "dbg")) (dbg)
     (each [i c (ipairs controls)]
-      (doto c
-        (: :setBounds   (* (+ w x)  (- i 1))
-                        y w 40)))
+      (let [r (. sizes i)]
+        (doto c
+          (: :setBounds r.x r.y r.w r.h))))
+                          
     (ComponentWrapper.new controls)))
 
 (fn make-sliders [side]
   (var sliders [])
-  (let [(width heigth) (window.getMode)
-        margin 10
-        origin (if (= side "left") 0 (/ (+ (/ width 2) margin)) (window.getDPIScale))
-        y 50
-        w (window.fromPixels (- (/ width 2 5) (/ margin 2 5)))
-        h (window.fromPixels (- heigth y margin))]
+  (let [(width heigth) (window.getMode)]
     (for [i 1 4]
-      (tset sliders i 
-            (doto (gooi.newSlider
-                     {:value 0.5
-                      :x (+ origin (* (- i 1) (+ w margin)))
-                      :y y :h h :w w})
-              (: :vertical)))))
+      (let [r (. (layout.get (.. side "Sliders")) i)]
+        (tset sliders i
+              (doto (gooi.newSlider
+                       {:value 0.5
+                        :x r.x
+                        :y r.y
+                        :w r.w
+                        :h r.h})
+                (: :vertical))))))
   (ComponentWrapper.new sliders))
 
 
@@ -65,9 +65,10 @@
         :minwidth w
         :minheight h})
     (tset state :menu (make-menu))
-    (tset state :l-sliders (make-sliders "left"))))
-    ; (tset state :r-sliders (make-sliders "right"))))
-    ; (make-sliders "top")))
+    (tset state :l-sliders (make-sliders "left"))
+    (tset state :r-sliders (make-sliders "right"))))
+      ; (tset state :r-sliders (make-sliders "right"))))
+      ; (make-sliders "top")))
 
 {:draw gooi.draw
  :update gooi.update

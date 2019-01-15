@@ -46,7 +46,10 @@
       (set nx (+ nx split)))
     result))
 
-(var layout {})
+(var layout nil)
+
+(fn get [c]
+  (. layout c))
 
 (fn recalculate-layout []
   (let [screen (screenRect)
@@ -54,25 +57,25 @@
         lrOptions {:vertical false :splits 2}
         sliderOptions {:vertical false :splits 4}
         (menu workspace) (bar menuOpts screen)
+        menuButtons (stack {:vertical false :splits 3} menu)
         [left right] (stack lrOptions workspace)
         leftSliders (stack sliderOptions left)
         rightSliders (stack sliderOptions right)]
-    (set layout
-      {:screen screen
-       :menu menu
-       :workspace workspace
-       :left left
-       :right right
-       :leftSliders leftSliders
-       :rightSliders rightSliders})))
+    {:screen screen
+     :menu menu
+     :menuButtons menuButtons
+     :workspace workspace
+     :left left
+     :right right
+     :leftSliders leftSliders
+     :rightSliders rightSliders}))
 
 (fn update []
   (let [(newW newH) (win.getMode)]
     (set w newW)
     (set h newH)
-    (when (or (~= w newW) (not (~= h newH)))
-          (recalculate-layout))))
-
+    (when (or (~= w newW) (not (~= h newH)) (not layout))
+          (set layout (recalculate-layout)))))
 
 (fn draw []
   (g.setLineWidth 3)
@@ -85,4 +88,6 @@
     (debug (. layout :rightSliders i))))
 
 {:update update
- :draw draw}
+ :draw draw
+ :get get
+ :recalculate-layout recalculate-layout}
