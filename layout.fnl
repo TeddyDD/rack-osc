@@ -12,10 +12,14 @@
     (gr.setColor r g b)
     (gr.rectangle "line" rect.x rect.y rect.w rect.h)))
 
+; Rect: {:x :y :w :h}
+
+; -> Rect
 (fn screenRect []
   {:x 0 :y 0 :w (win.fromPixels w) :h (win.fromPixels h)})
 
-(lambda firstRest [options parent]
+; -> Rect, Rect
+(lambda bar [options parent]
   (let [vertical (or (. options :vertical) false)
         split (. options :split)
         first (if vertical
@@ -24,58 +28,43 @@
         second (if vertical
                    {:x parent.x :y (+ parent.y split) :w parent.w :h (- parent.h split)}
                    {:y parent.y :x (+ parent.x split) :h parent.h :w (- parent.w split)})]
-    (values first reset)))
+    (values first second)))
 
-(fn main-screen []
-  (g.setLineWidth 4)
-  (g.setColor 1 0 1)
-  (g.rectangle "line" (full-screen-rect)))
-
-; TODO convert to first / rest
-(fn menu [heigth]
-  (let [(x y w h) (full-screen-rect)]
-    (g.setColor 0.3 0.1 1)
-    (g.rectangle "line" x y w heigth)
-    (values x y w heigth)))
-
-(fn rest [options x y w h]
-  (let [vertical (or (. options :vertical) false)
-        split (. options :split)
-        first (if vertical
-                  {:w w :h split}
-                  {:h h :w split})
-        second (if vertical
-                   {:x x :y (+ y split) :w w :h (- h split)}
-                   {:y y :x (+ x split) :h h :w (- w split)})]
-    (g.setColor 0 0 1)
-    (g.rectangle "line" x y first.w first.h)
-    (g.setColor 1 0 0)
-    (g.rectangle "line" second.x second.y second.w second.h)))
-
-
-(fn stack [x y w h options]
+; [Rect]
+(lambda stack [options parent]
   (let [splits options.splits
         vertical (or (. options :vertical) false)
-        axis (if vertical y x)
-        split (/ (if vertical h w) splits)]
+        axis (if vertical parent.y parent.x)
+        split (/ (if vertical parent.h parent.w) splits)]
     (var nx axis)
+    (var result [])
     (for [i 1 splits]
-      (g.setColor 0.1 (* 0.1 i) 0.1)
-      (if vertical
-          (g.rectangle "line" x nx w split)
-          (g.rectangle "line" nx y split h))
-      (set nx (+ nx split)))))
+      (tset result i
+        (if vertical
+            {:x parent.x :y nx :w parent.w :h split}
+            {:x nx :y parent.y :w split :h  parent.h}))
+      (set nx (+ nx split)))
+    result))
 
 (var layout {})
 
 (fn recalculate-layout []
   (let [screen (screenRect)
         menuOpts {:vertical true :split 45}
-        (menu workspace) (firstRest menuOpts screen)]
+        lrOptions {:vertical false :splits 2}
+        sliderOptions {:vertical false :splits 4}
+        (menu workspace) (bar menuOpts screen)
+        [left right] (stack lrOptions workspace)
+        leftSliders (stack sliderOptions left)
+        rightSliders (stack sliderOptions right)]
     (set layout
       {:screen screen
        :menu menu
-       :workspace workspace})))
+       :workspace workspace
+       :left left
+       :right right
+       :leftSliders leftSliders
+       :rightSliders rightSliders})))
 
 (fn update []
   (let [(newW newH) (win.getMode)]
@@ -88,12 +77,12 @@
 (fn draw []
   (g.setLineWidth 3)
   (debug layout.screen)
-  (debug layout.menu))
-  ; (main-screen)
-  ; (rest {:split 40 :vertical false} (full-screen-rect))
-  ; (menu 40)
-  ; (let [(_ _ fw fh) (full-screen-rect)]
-    ; (stack 0 40 fw (- fh 40)  {:splits 2 :vertical true})))
+  (debug layout.menu)
+  (debug layout.left)
+  (debug layout.right)
+  (for [i 1 4]
+    (debug (. layout :leftSliders i))
+    (debug (. layout :rightSliders i))))
 
 {:update update
  :draw draw}
