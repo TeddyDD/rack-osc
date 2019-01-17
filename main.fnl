@@ -24,13 +24,17 @@
 
 (fn love.draw []
   (gui.draw)
-  (layout.draw)
   (love.graphics.print (tostring (love.window.getDPIScale) 10 10)))
 
 (fn love.update [dt]
   (gui.update dt)
-  (layout.update)
-  (: udp :send (osc.float-msg (rnd 1 127))))
+  (layout.update))
+
+(fn lerp [a b t]
+  (+ (* (- 1 t) a) (* t b)))
+
+(fn love.handlers.valueChanged [channel value]
+  (: udp :send (osc.float-msg (lerp 0 127 value) channel)))
 
 (fn love.mousepressed [x y button]
   (gui.mouse-pressed))
