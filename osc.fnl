@@ -19,6 +19,13 @@
       (padding-pattern tag)
       "f"))
 
+(fn pack-int-pattern [addr tag arg]
+  (.. ">s"
+      (padding-pattern addr)
+      "s"
+      (padding-pattern tag)
+      "I"))
+
 ; Create float message
 (fn float-msg [num channel]
   (let [addr (.. "/trowacv/ch/" (tostring channel))
@@ -32,4 +39,17 @@
       (padding-zeros tag)
       arg)))
 
-{:float-msg float-msg}
+(fn int-msg [num channel]
+  (let [addr (.. "/trowacv/ch/" (tostring channel))
+        tag ",f"
+        arg num]
+    (struct.pack
+      (pack-int-pattern addr tag arg)
+      addr
+      (padding-zeros addr)
+      tag
+      (padding-zeros tag)
+      arg)))
+
+{:float-msg float-msg
+ :int-msg int-msg}
