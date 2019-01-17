@@ -1,5 +1,7 @@
 (require "gooi")
+
 (local layout (require :layout))
+(local trowa (require :trowa))
 
 (local window love.window)
 
@@ -8,7 +10,8 @@
 
 (local state
   {:mode "osccv" ; ... gridseq, voltseq
-   :menu {}})
+   :menu {}
+   :values [0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5]})
 
 ; I got issues with panels so I wrote this simple wrapper to show and hide
 ; controls
@@ -29,17 +32,17 @@
 
 (fn make-menu []
   (let [sizes (layout.get "menuButtons")
-        controls 
+        controls
           [(doto (gooi.newButton {:text "Exit"})
              (: :onRelease (fn exit-handler [] (love.event.quit))))
-           (gooi.newButton {:text "Layout"})
+           ; (gooi.newButton {:text "Layout"})
            (gooi.newButton {:text "Conn"})]]
     ; (local dbg (require "dbg")) (dbg)
     (each [i c (ipairs controls)]
       (let [r (. sizes i)]
         (doto c
           (: :setBounds r.x r.y r.w r.h))))
-                          
+
     (ComponentWrapper.new controls)))
 
 (fn make-sliders [side]
@@ -68,13 +71,25 @@
     (tset state :menu (make-menu))
     (tset state :l-sliders (make-sliders "left"))
     (tset state :r-sliders (make-sliders "right"))))
-      ; (tset state :r-sliders (make-sliders "right"))))
-      ; (make-sliders "top")))
+
+(fn update [dt]
+  (gooi.update dt)
+  (for [i 1 4]
+    (let [j (+ i 4)
+          oldL (. state :values i)
+          oldR (. state :values j)
+          newL (: (. state :l-sliders :controls i) :getValue)
+          newR (: (. state :r-sliders :controls i) :getValue)]
+      (when (~= oldL newL)
+          (tset state :values i newL)
+          (love.event.push "valueChanged" i newL))
+      (when (~= oldR newR)
+          (tset state :values j newR)
+          (love.event.push "valueChanged" j newR)))))
 
 {:draw gooi.draw
- :update gooi.update
+ :update update
  :mouse-pressed gooi.pressed
  :mouse-released gooi.released
  :mouse-moved gooi.moved
  :init init}
-
