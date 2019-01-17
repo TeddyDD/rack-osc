@@ -43,18 +43,19 @@
     (ComponentWrapper.new controls)))
 
 (fn make-sliders [side]
-  (var sliders [])
-  (let [(width heigth) (window.getMode)]
-    (for [i 1 4]
-      (let [r (. (layout.get (.. side "Sliders")) i)]
-        (tset sliders i
-              (doto (gooi.newSlider
-                       {:value 0.5
-                        :x r.x
-                        :y r.y
-                        :w r.w
-                        :h r.h})
-                (: :vertical))))))
+  (var sliders {})
+  (for [i 1 4]
+    (let [r (. (layout.get (.. side "Sliders")) i)
+          colorOff (if (= side "left") 0 4)]
+      (tset sliders i
+        (doto (gooi.newSlider
+                 {:value 0.5
+                  :x r.x
+                  :y r.y
+                  :w r.w
+                  :h r.h})
+          (: :vertical)
+          (: :bg (. trowa :colors (+ colorOff i)))))))
   (ComponentWrapper.new sliders))
 
 
