@@ -9,17 +9,18 @@
 
 (local rnd love.math.random)
 
-(local ip "127.0.0.1")
-(local port 7001)
+(local state
+  {:ip "127.0.0.1"
+   :port 7001
+   :channels []})
 
 (fn love.load []
-  
   (layout.update)
   (gui.init)
 
   (global udp (socket.udp))
   (: udp :settimeout 0)
-  (: udp :setpeername ip port))
+  (: udp :setpeername state.ip state.port))
 
 (fn love.draw []
   (gui.draw)
