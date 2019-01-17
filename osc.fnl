@@ -20,8 +20,8 @@
       "f"))
 
 ; Create float message
-(fn float-msg [num]
-  (let [addr "/trowacv/ch/1"
+(fn float-msg [num channel]
+  (let [addr (.. "/trowacv/ch/" (tostring channel))
         tag ",f"
         arg num]
     (struct.pack
