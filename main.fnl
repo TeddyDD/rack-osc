@@ -34,7 +34,9 @@
   (+ (* (- 1 t) a) (* t b)))
 
 (fn love.handlers.valueChanged [channel value]
-  (: udp :send (osc.float-msg (lerp 0 127 value) channel)))
+  (let [(ok err)(: udp :send (osc.float-msg (lerp 0 127 value) channel))]
+    (assert ok)))
+
 (fn love.keypressed [key]
   (when (= key "escape")
     (love.event.quit)))
