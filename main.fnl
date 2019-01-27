@@ -35,6 +35,9 @@
 
 (fn love.handlers.valueChanged [channel value]
   (: udp :send (osc.float-msg (lerp 0 127 value) channel)))
+(fn love.keypressed [key]
+  (when (= key "escape")
+    (love.event.quit)))
 
 (fn love.mousepressed [x y button]
   (gui.mouse-pressed))
