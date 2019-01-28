@@ -30,14 +30,18 @@
       (: :setVisible visible)
       (: :setEnabled visible))))
 
+(lambda ComponentWrapper.set_bounds [self sizes]
+  (each [i c (ipairs (. self :controls))]
+    (let [{:x :y :w :h} (. sizes i)]
+      (: c :setBounds x y w h))))
+
 (fn make-menu []
   (let [sizes (layout.get "menuButtons")
         controls
           [(doto (gooi.newButton {:text "Exit"})
              (: :onRelease (fn exit-handler [] (love.event.quit))))
-           ; (gooi.newButton {:text "Layout"})
+           (gooi.newButton {:text "Layout"})
            (gooi.newButton {:text "Conn"})]]
-    ; (local dbg (require "dbg")) (dbg)
     (each [i c (ipairs controls)]
       (let [r (. sizes i)]
         (doto c
