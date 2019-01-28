@@ -1,5 +1,6 @@
 (local socket (require :socket))
 (local struct (require :struct))
+(require "gooi")
 
 (local osc (require :osc))
 (local gui (require :gui))
